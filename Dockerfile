@@ -7,9 +7,10 @@ ARG XAVS2_VERSION=1.4
 ARG XAVS2_URL="https://github.com/pkuvcl/xavs2/archive/refs/tags/$XAVS2_VERSION.tar.gz"
 ARG XAVS2_SHA256=1e6d731cd64cb2a8940a0a3fd24f9c2ac3bb39357d802432a47bc20bad52c6ce
 
-# bump: alpine /FROM alpine:([\d.]+)/ docker:alpine|^3
-# bump: alpine link "Release notes" https://alpinelinux.org/posts/Alpine-$LATEST-released.html
-FROM alpine:3.16.2 AS base
+# Must be specified
+ARG ALPINE_VERSION
+
+FROM alpine:${ALPINE_VERSION} AS base
 
 FROM base AS download
 ARG XAVS2_URL
@@ -31,10 +32,15 @@ COPY --from=download /tmp/xavs2/ /tmp/xavs2/
 WORKDIR /tmp/xavs2/build/linux
 RUN \
   apk add --no-cache --virtual build \
-    build-base bash && \
+    build-base bash pkgconf && \
   # TODO: seems to be issues with asm on musl
   ./configure --disable-asm --enable-pic --disable-cli && \
   make -j$(nproc) install && \
+  # Sanity tests
+  pkg-config --exists --modversion --path xavs2 && \
+  ar -t /usr/local/lib/libxavs2.a && \
+  readelf -h /usr/local/lib/libxavs2.a && \
+  # Cleanup
   apk del build
 
 FROM scratch

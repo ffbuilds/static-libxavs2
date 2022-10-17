@@ -20,9 +20,9 @@ jobs:
     strategy:
       matrix:
         alpine_version:
-          # bump: alpine /([\d.]+) # bumpme alpine$/ docker:alpine|^3
+          # bump: alpine /- ([\d.]+) # updateme/ docker:alpine|^3
           # bump: alpine link "Release notes" https://alpinelinux.org/posts/Alpine-$LATEST-released.html
-          - 3.16.2 # bumpme alpine
+          - 3.16.2 # updateme
           - edge
 
     steps:

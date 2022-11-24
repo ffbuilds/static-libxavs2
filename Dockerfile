@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 
 # bump: xavs2 /XAVS2_VERSION=([\d.]+)/ https://github.com/pkuvcl/xavs2.git|^1
 # bump: xavs2 after ./hashupdate Dockerfile XAVS2 $LATEST
